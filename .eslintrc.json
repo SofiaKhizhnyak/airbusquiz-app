@@ -1,3 +1,8 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "no-unescaped-entities": "on",
+    "no-unused-vars": "off",
+    "jsx-a11y/no-nested-headings": "off"
+  }
 }
