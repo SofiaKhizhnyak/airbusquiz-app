@@ -16,4 +16,6 @@ const NavButton = React.memo(({ label, icon, onClick }) => (
   </button>
 ));
 
+NavButton.displayName = "NavButton";
+
 export default NavButton;

@@ -4,14 +4,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SendEmail from "../../components/SendEmail";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { usePrefetchPages } from "../../hooks/usePrefetchPages";
 
 function NoUserFound({ message }) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    router.prefetch("/pages/signup");
-  }, []);
+  usePrefetchPages(["/pages/signup"]);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);

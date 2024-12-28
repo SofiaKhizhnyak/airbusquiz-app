@@ -4,11 +4,11 @@ import { useQuiz } from "../contexts/QuizContext";
 import { FiChevronRight } from "react-icons/fi";
 
 function NextButton() {
-  const { dispatch, index, numQuestions, answer } = useQuiz();
+  const { dispatch, index, numQuestions, userAnswer } = useQuiz();
 
   const router = useRouter();
 
-  const isAnswered = answer !== null;
+  const isAnswered = userAnswer !== null;
   const isLastQuestion = index === numQuestions - 1;
 
   const handleAnswer = () => {

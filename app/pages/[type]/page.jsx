@@ -3,16 +3,14 @@ import { useEffect, use } from "react";
 import { useQuiz } from "../../contexts/QuizContext";
 import Chapters from "../../components/Chapters";
 import { useRouter } from "next/navigation";
+import { usePrefetchPages } from "../../hooks/usePrefetchPages";
 
 export default function QuizTypePage({ params }) {
   const { type } = use(params);
   const { status } = useQuiz();
   const router = useRouter();
 
-  useEffect(() => {
-    router.prefetch("/pages/start");
-    router.prefetch("/pages/finish");
-  }, []);
+  usePrefetchPages(["/pages/start", "/pages/finish"]);
 
   useEffect(() => {
     if (status === "finished") {

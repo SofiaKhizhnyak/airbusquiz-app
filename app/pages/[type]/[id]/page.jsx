@@ -8,7 +8,14 @@ export default function ChapterQuestions({ params }) {
   const { type, id } = use(params); // type = "ata" or "questions", id = chapter number
   const { status, questions } = useQuiz();
 
+  console.log("ChapterQuestions params:", { type, id });
+
+  /*
+  decodeURIComponent is a built-in JavaScript function decodes a URL-encoded component.
+  Replaces encoded characters (like %20 for spaces) with their readable equivalents.
+  */
   const decodedChapterName = decodeURIComponent(id);
+  console.log("Decoded chapter name:", decodedChapterName);
 
   if (status === "loading") {
     return (
@@ -19,6 +26,7 @@ export default function ChapterQuestions({ params }) {
   }
 
   if (status === "error") {
+    console.log("Quiz status error. Questions:", questions);
     return <p className="text-red-500">Failed to load questions. Try again.</p>;
   }
 

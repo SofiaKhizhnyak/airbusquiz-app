@@ -4,6 +4,7 @@ import React from "react";
 import { MdWavingHand } from "react-icons/md";
 import { RiMailSendLine } from "react-icons/ri";
 import SendEmail from "../../components/SendEmail";
+import { TicketsPlane } from "lucide-react";
 
 function Signup() {
   return (
@@ -17,8 +18,9 @@ function Signup() {
           <p className="text-md md:text-lg mt-3">
             Ready to access exclusive Quizzes, Tips, and Questions?
           </p>
-          <p className="text-sm sm:text-md text-blue-950">
-            Fill the form below to embark on your journey.
+          <p className="text-sm sm:text-md text-blue-950 flex mt-2 items-center justify-center gap-1">
+            <span>Fill the form below to embark on your journey</span>
+            <TicketsPlane size={20} strokeWidth={1.25} />
           </p>
           <div className="mt-3">
             <p className="text-sm mb-1 md:text-lg text-slate-700">

@@ -4,7 +4,7 @@ import { SlPlane } from "react-icons/sl";
 
 export default function PlaneLoader() {
   return (
-    <div className="flex items-center justify-center w-full h-screen bg-sky-100">
+    <div className="flex items-center justify-center w-full h-screen bg-teal-50">
       <div className="relative w-40 h-40">
         {/* Globe */}
         <div className="absolute inset-0 rounded-full border-2 border-sky-600"></div>
@@ -25,7 +25,9 @@ export default function PlaneLoader() {
 
         {/* Loading text */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-sky-800 font-semibold animate-pulse">Loading...</p>
+          <p className="text-sky-800/50 font-semibold animate-pulse">
+            Loading...
+          </p>
         </div>
       </div>
     </div>

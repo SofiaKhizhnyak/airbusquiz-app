@@ -1,39 +1,14 @@
 import { db } from "../../firebase";
-import { collection, addDoc, doc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 /* import {
-  ata21q,
-  ata26q,
-  ata27q,
-  ata28q,
-  ata29q,
-  ata32q,
-  ata36q,
-  ata52q,
-} from "../data/atasData"; */
+  ata21q,  ata26q,  ata27q,  ata28q,  ata29q,  ata32q,  ata36q,  ata52q,} from "../data/atasData"; */
 /* import { tips } from "../data/tipsData"; */
 
-import {
-  qData2,
-  qData3,
-  qData4,
-  qData5,
-  qData6,
-  qData7,
-  qData8,
-  qData9,
-  qData10,
-  qData11,
-  qData12,
-  qData13,
-  qData14,
-  qData15,
-  qData16,
-  qData17,
-  qData18,
-  qData19,
-} from "../data/qData";
+/* import {
+  qData2,  qData3,  qData4,  qData5,  qData6,  qData7,  qData8,  qData9,  qData10,  qData11,  qData12,  qData13,  qData14,  qData15,  qData16,  qData17,  qData18,  qData19,} from "../data/qData"; */
 
-/*   qData20,
+import {
+  qData20,
   qData21,
   qData22,
   qData23,
@@ -42,9 +17,11 @@ import {
   qData26,
   qData27,
   qData28,
-  qData29, */
+  qData29,
+} from "../data/qData";
 
-export const uploadData = async () => {
+// ***Upload questions data part 1***** //
+/* export const uploadData = async () => {
   try {
     console.log("Uploading qData...");
 
@@ -74,8 +51,38 @@ export const uploadData = async () => {
         ],
       },
     ];
-    ///TO UPLOAD LATER
-    /*     { name: "FLIGHT CONTROLS 1", questions: qData20 },
+
+    for (const dataset of datasets) {
+      for (const chapter of dataset.data) {
+        const docRef = await addDoc(collection(db, dataset.collectionName), {}); // Create parent document
+        const subCollectionRef = collection(docRef, chapter.name); // Subcollection under the parent document
+
+        for (const question of chapter.questions) {
+          await addDoc(subCollectionRef, question); // Add questions to subcollection
+        }
+
+        console.log(
+          `Uploaded subcollection: ${chapter.name} to /${dataset.collectionName}/${docRef.id}/${chapter.name}`
+        );
+      }
+    }
+
+    console.log("All qData uploaded successfully!");
+  } catch (error) {
+    console.log("Error uploading qData:", error);
+  }
+}; */
+
+// ***Upload questions data part 2***** //
+export const uploadData = async () => {
+  try {
+    console.log("Uploading qData...");
+
+    const datasets = [
+      {
+        collectionName: "questions",
+        data: [
+          { name: "FLIGHT CONTROLS 1", questions: qData20 },
           { name: "FLIGHT CONTROLS 2", questions: qData21 },
           { name: "INDICAT / RECORD 1", questions: qData22 },
           { name: "INDICAT / RECORD 2", questions: qData23 },
@@ -84,9 +91,11 @@ export const uploadData = async () => {
           { name: "COMMUNICATION 1", questions: qData26 },
           { name: "COMMUNICATION 2", questions: qData27 },
           { name: "LANDING GEAR 1", questions: qData28 },
-          { name: "LANDING GEAR 2", questions: qData29 }, */
+          { name: "LANDING GEAR 2", questions: qData29 },
+        ],
+      },
+    ];
 
-    // Upload data
     for (const dataset of datasets) {
       for (const chapter of dataset.data) {
         const docRef = await addDoc(collection(db, dataset.collectionName), {}); // Create parent document
@@ -108,6 +117,7 @@ export const uploadData = async () => {
   }
 };
 
+// ***Upload atas data***** //
 /* export const uploadData = async () => {
   try {
     console.log("Uploading data...");
@@ -153,6 +163,7 @@ export const uploadData = async () => {
   }
 }; */
 
+// ***Upload tips data***** //
 /* export const uploadData = async () => {
   try {
     console.log("Uploading tips data...");
@@ -172,3 +183,37 @@ export const uploadData = async () => {
     console.log("Error uploading data:", error);
   }
 }; */
+
+/*
+The uploadData function uploads a structured dataset to a Firestore database. 
+It organizes the data into a parent collection with multiple subcollections, 
+each containing a set of documents that include questions / tips / atas. 
+
+Firestore Structure Example:
+
+questions (Parent Collection)
+  └── Document (auto-generated ID)
+      └── AIRCON1 (Subcollection)
+          ├── Question 1 (Document)
+          ├── Question 2 (Document)
+          ...
+      └── AUTOFLIGHT (Subcollection)
+          ├── Question 1 (Document)
+          ├── Question 2 (Document)
+          ...
+      ...
+
+How It Works:
+- Defines Datasets: The function organizes data into parent collections (questions) and subcollections (e.g., AIRCON1, AUTOFLIGHT).
+- Creates Parent Documents: For each chapter, a parent document is created in the specified collection.
+- Adds Subcollections: Each chapter name becomes a subcollection under the parent document.
+- Uploads Questions: Questions for each chapter are added as documents into their respective subcollections.
+- Logs Progress: Progress and paths for each uploaded chapter are logged to the console.
+- Error Handling: Errors during the upload process are caught and logged.
+
+Benefits:
+- Batch Upload: Simplifies uploading large amounts of structured data into Firestore.
+- Data Organization: Creates a clear hierarchy of collections, subcollections, and documents.
+- Scalability: Supports adding multiple datasets and chapters without code duplication.
+- Progress Tracking: Logs progress for better debugging and transparency.
+*/

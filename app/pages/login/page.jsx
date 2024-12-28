@@ -1,11 +1,12 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { LiaPlaneArrivalSolid } from "react-icons/lia";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { TbLogin2 } from "react-icons/tb";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { usePrefetchPages } from "../../hooks/usePrefetchPages";
 
 const Spinner = dynamic(() =>
   import("@nextui-org/react").then((mod) => mod.Spinner)
@@ -19,10 +20,7 @@ export default function Login() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    router.prefetch("/pages/start");
-    router.prefetch("/pages/nouser");
-  }, []);
+  usePrefetchPages(["/pages/start", "/pages/nouser"]);
 
   const handleSubmit = useCallback(
     async (e) => {

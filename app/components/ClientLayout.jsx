@@ -7,7 +7,7 @@ import ProtectedRoute from "./ProtectedRoute";
 
 export default function ClientLayout({ children }) {
   const pathname = usePathname();
-  const isHomePage = pathname === "/";
+
   const unprotectedPaths = [
     "/",
     "/pages/signup",
@@ -17,28 +17,30 @@ export default function ClientLayout({ children }) {
   const isUnprotectedPage = unprotectedPaths.includes(pathname);
   const [viewportHeight, setViewportHeight] = useState("100vh");
 
-  // Adjust height for different screen sizes
+  //  dynamically adjusts the viewport height of the app, based on the window height
   useEffect(() => {
     const updateHeight = () => {
       setViewportHeight(`${window.innerHeight}px`);
     };
 
-    updateHeight(); // Set initial height
+    updateHeight(); // initial height
+    // recalculate and update the height, if the user resizes the window
     window.addEventListener("resize", updateHeight);
 
+    // clean up the event listener on unmount
     return () => window.removeEventListener("resize", updateHeight);
   }, []);
 
   return (
     <div
       style={{ height: viewportHeight }} // Dynamic height
-      className="flex flex-col h-screen overflow-hidden"
+      className="flex flex-col overflow-hidden"
     >
       {/* Render Sidebar only if not on the home page */}
-      {!isHomePage && <SideBar />}
+      {!isUnprotectedPage && <SideBar />}
 
       {/* Main Content */}
-      <main className={`flex-grow ${!isHomePage && "ml-14"}`}>
+      <main className={`flex-grow ${!isUnprotectedPage && "ml-14"}`}>
         {/* Wrap protected pages with ProtectedRoute */}
         {isUnprotectedPage ? (
           children

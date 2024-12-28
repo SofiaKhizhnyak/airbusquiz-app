@@ -20,7 +20,6 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <title>Airbus Quiz</title>
-
         <link
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
           rel="stylesheet"
@@ -31,17 +30,17 @@ export default function RootLayout({ children }) {
         className="h-[90vh]  xs:max-h-screen flex flex-col overflow-hidden bg-white text-black dark:bg-slate-800 dark:text-white "
         cz-shortcut-listen="true"
       >
-        <NextUIProvider>
-          <AuthProvider>
-            <ThemeProvider>
-              <Header />
+        <ThemeProvider>
+          <NextUIProvider>
+            <AuthProvider>
               <ClientQuizProvider>
+                <Header />
                 <ClientLayout>{children}</ClientLayout>
               </ClientQuizProvider>
-            </ThemeProvider>
-            <Footer />
-          </AuthProvider>
-        </NextUIProvider>
+              <Footer />
+            </AuthProvider>
+          </NextUIProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

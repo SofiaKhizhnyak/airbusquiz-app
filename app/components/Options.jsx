@@ -3,9 +3,9 @@
 import { useQuiz } from "../contexts/QuizContext";
 
 function Options({ question }) {
-  const { dispatch, answer } = useQuiz();
+  const { dispatch, userAnswer } = useQuiz();
 
-  const hasAnswered = answer !== null;
+  const hasAnswered = userAnswer !== null;
 
   const handleAnswer = (index) => {
     dispatch({ type: "newAnswer", payload: index });
@@ -15,7 +15,7 @@ function Options({ question }) {
     <div className="space-y-2">
       {question.options.map((option, index) => {
         const isCorrect = index === question.answer;
-        const isSelected = index === answer;
+        const isSelected = index === userAnswer;
 
         return (
           <button

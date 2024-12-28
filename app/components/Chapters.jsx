@@ -36,7 +36,9 @@ export default function Chapters() {
       },
     });
 
-    router.push(`/pages/${type}/${encodeURIComponent(chapter)}`);
+    setTimeout(() => {
+      router.push(`/pages/${type}/${encodeURIComponent(chapter)}`);
+    }, 0);
   };
 
   // Pagination logic for "questions" type

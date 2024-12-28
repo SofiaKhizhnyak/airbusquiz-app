@@ -15,3 +15,15 @@ export const fetchTipsFromFirestore = async () => {
     throw error;
   }
 };
+
+/*
+The fetchTipsFromFirestore function retrieves data from the "tips" collection in a Firestore database. 
+It is an asynchronous utility that fetches all documents from the specified collection, 
+maps them into a structured format with their document ID, 
+and returns the results as an array.
+
+Benefits:
+- Reusability: Encapsulates Firestore query logic into a single function.
+- Error Handling: Handles and logs errors during data fetching.
+- Structured Data: Provides a clean array of objects with id and data for easy use in components.
+*/

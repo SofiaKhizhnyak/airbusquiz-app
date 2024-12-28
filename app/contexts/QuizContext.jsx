@@ -2,6 +2,7 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { useAuth } from "./AuthContext";
 
 const QuizContext = createContext();
 
@@ -176,7 +177,7 @@ const fetchQuestionsFromFirestore = async (collectionName, chapterName) => {
       firestoreSubcollectionName = chapterName;
     } else if (collectionName === "questions") {
       firestoreSubcollectionName = Object.keys(firestoreToDisplayNameMap).find(
-        (key) => firestoreToDisplayNameMap[key] === chapterName
+        (value) => firestoreToDisplayNameMap[value] === chapterName
       );
     }
 
@@ -232,22 +233,23 @@ const fetchQuestionsFromFirestore = async (collectionName, chapterName) => {
       `Error fetching questions from ${collectionName}/${chapterName}:`,
       error
     );
-    throw error;
   }
 };
 
 const initialState = {
+  userId: null,
   type: null,
   selectedChapter: null,
   questions: [],
   status: "idle",
   index: 0,
-  answer: null,
+  userAnswer: null,
   points: 0,
-  chapters: Object.values(firestoreToDisplayNameMap),
+  chapters: Object.values(firestoreToDisplayNameMap), // returns an array containing all the values of that object
+  progress: [], // User's progress for each chapter
 };
 
-function reducer(state, action) {
+/* function reducer(state, action) {
   switch (action.type) {
     case "dataReceived":
       return {
@@ -346,6 +348,136 @@ function reducer(state, action) {
       console.warn("Unknown action type:", action.type);
       return state;
   }
+} */
+function reducer(state, action) {
+  switch (action.type) {
+    case "dataReceived":
+      return {
+        ...state,
+        questions: action.payload,
+        status: "ready",
+      };
+
+    case "dataFailed":
+      return {
+        ...state,
+        status: "error",
+      };
+
+    case "start":
+      return {
+        ...state,
+        status: "active",
+      };
+
+    case "selectChapter":
+      return {
+        ...state,
+        type: action.payload.type,
+        selectedChapter: action.payload.chapter,
+        status: "loading",
+      };
+
+    case "resetChapter":
+      return {
+        ...state,
+        index: 0,
+        userAnswer: null,
+        points: 0,
+        status: "ready",
+        questions: state.questions.map((question) => ({
+          ...question,
+          userAnswer: null,
+          isCorrect: null,
+        })),
+      };
+
+    case "resetStatus":
+      return {
+        ...initialState,
+      };
+
+    case "newAnswer":
+      const currentQuestion = state.questions[state.index];
+      const isCorrect = currentQuestion?.answer === action.payload;
+
+      return {
+        ...state,
+        points: isCorrect ? state.points + 1 : state.points,
+        questions: state.questions.map((q, idx) =>
+          idx === state.index
+            ? { ...q, userAnswer: action.payload, isCorrect }
+            : q
+        ),
+        userAnswer: action.payload,
+      };
+
+    case "nextQuestion":
+      if (state.index >= state.questions.length - 1) {
+        return {
+          ...state,
+          status: "finished",
+        };
+      }
+      return {
+        ...state,
+        index: state.index + 1,
+        userAnswer: state.questions[state.index + 1]?.userAnswer ?? null,
+      };
+
+    case "previousQuestion":
+      if (state.index === 0) {
+        return state;
+      }
+
+      const prevIndex = state.index - 1;
+
+      return {
+        ...state,
+        index: prevIndex,
+        userAnswer: state.questions[prevIndex]?.userAnswer ?? null,
+      };
+
+    case "finish":
+      return {
+        ...state,
+        status: "finished",
+      };
+
+    case "setProgress":
+      return {
+        ...state,
+        progress: action.payload,
+      };
+
+    case "updateProgress":
+      const updatedProgress = [...state.progress];
+      const existingProgressIndex = updatedProgress.findIndex(
+        (p) =>
+          p.type === action.payload.type && p.chapter === action.payload.chapter
+      );
+
+      if (existingProgressIndex >= 0) {
+        updatedProgress[existingProgressIndex] = action.payload;
+      } else {
+        updatedProgress.push(action.payload);
+      }
+
+      return {
+        ...state,
+        progress: updatedProgress,
+      };
+
+    case "setUserId":
+      return {
+        ...state,
+        currUserId: action.payload,
+      };
+
+    default:
+      console.warn("Unknown action type:", action.type);
+      return state;
+  }
 }
 
 function QuizProvider({ children }) {
@@ -355,19 +487,29 @@ function QuizProvider({ children }) {
       questions,
       status,
       index,
-      answer,
+      userAnswer,
       points,
       selectedChapter,
       chapters,
+      currUserId,
+      progress,
     },
     dispatch,
   ] = useReducer(reducer, initialState);
   const numQuestions = questions.length;
 
+  const { userId } = useAuth();
+
+  useEffect(() => {
+    if (userId) {
+      dispatch({ type: "setUserId", payload: userId });
+    }
+  }, [userId]);
+
   useEffect(() => {
     const fetchQuestions = async () => {
       if (!type || !selectedChapter) {
-        console.warn("Type or selected chapter is not defined.");
+        console.log("Type or selected chapter is not defined.");
         return;
       }
 
@@ -404,8 +546,28 @@ function QuizProvider({ children }) {
       }
     };
 
-    fetchQuestions();
+    if (type && selectedChapter) {
+      fetchQuestions();
+    }
   }, [type, selectedChapter]);
+
+  useEffect(() => {
+    const loadProgress = async () => {
+      try {
+        const progressRef = collection(db, "users", currUserId, "progress");
+        const progressSnapshot = await getDocs(progressRef);
+        const progressData = progressSnapshot.docs.map((doc) => ({
+          chapter: doc.id,
+          ...doc.data(),
+        }));
+        dispatch({ type: "setProgress", payload: progressData });
+      } catch (error) {
+        console.log("Error loading progress:", error);
+      }
+    };
+
+    loadProgress();
+  }, [currUserId]);
 
   /*  const fetchSubcollectionData = async (subcollectionName) => {
     try {
@@ -439,12 +601,14 @@ function QuizProvider({ children }) {
         questions,
         status,
         index,
-        answer,
+        userAnswer,
         points,
         selectedChapter,
         dispatch,
         numQuestions,
         chapters,
+        progress,
+        currUserId,
       }}
     >
       {children}

@@ -5,7 +5,9 @@ import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
 import { CiSquareInfo } from "react-icons/ci";
 import { BsQuestionSquare } from "react-icons/bs";
 import NavButton from "../../components/NavButton";
+import { usePrefetchPages } from "../../hooks/usePrefetchPages";
 /* import { uploadData } from "@/app/firebase/uploadData"; */
+import { useAuth } from "../../contexts/AuthContext";
 
 const navButtons = [
   {
@@ -28,6 +30,12 @@ const navButtons = [
 export default function Start() {
   const router = useRouter();
 
+  const { userId } = useAuth();
+
+  useEffect(() => {
+    console.log("User ID: ", userId);
+  }, []);
+
   /*  useEffect(() => {
     const upload = async () => {
       try {
@@ -41,11 +49,7 @@ export default function Start() {
     upload();
   }, []); */
 
-  useEffect(() => {
-    router.prefetch("/pages/ata");
-    router.prefetch("/pages/questions");
-    router.prefetch("/pages/tips");
-  }, [router]);
+  usePrefetchPages(["/pages/ata", "/pages/questions", "/pages/tips"]);
 
   const handleNavigation = (type) => {
     router.push(`/pages/${type}`);

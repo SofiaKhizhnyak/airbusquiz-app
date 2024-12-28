@@ -15,10 +15,11 @@ export default function ThemeProvider({ children }) {
   return (
     <ThemeContext.Provider value={{ theme: resolvedTheme, toggleTheme }}>
       <NextThemesProvider
-        attribute="class"
+        attribute="data-theme"
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange
+        themes={["light", "dark"]}
       >
         {children}
       </NextThemesProvider>
