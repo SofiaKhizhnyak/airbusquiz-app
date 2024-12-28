@@ -55,8 +55,11 @@ AirbusQuiz is a Next.js quiz app designed to help maintenance engineering studen
 
   -Frontend Development: Leveraged Next.js for a high-performance web app with SSR and static generation.
   
-  -State Management: Designed custom hooks for managing user progress and app state.
-  
+  -State Management: 
+    QuizContext: Manages the state of quizzes, including progress tracking and data fetching.
+    AuthContext: Oversees user authentication states, such as login and logout functionalities.
+    Additionally, I developed custom hooks to handle user state and progress management efficiently.
+
   -Data Visualization: Used Recharts and Chart.js to create intuitive, dynamic visual representations of user data.
   
   -Responsive Design: Mastered responsive layouts using Tailwind CSS and Chakra UI.
