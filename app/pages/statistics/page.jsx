@@ -150,7 +150,7 @@ function StatsPage() {
     return <div className="text-red-500">Error loading progress: {error}</div>;
 
   return (
-    <div className="flex flex-col w-full px-6 lg:px-14 py-4 overflow-y-scroll h-screen max-h-screen xs:pb-24">
+    <div className="flex flex-col w-full px-6 lg:px-14 py-4 overflow-y-scroll h-screen max-h-screen pb-24">
       {/* TITLE */}
       <div className="flex flex-col items-center justify-center">
         <p className="font-extrabold text-blue-950 text-2xl tracking-wider dark:text-slate-950 z-20 text-shadow-dark uppercase">
